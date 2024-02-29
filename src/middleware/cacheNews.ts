@@ -16,7 +16,11 @@ const cacheMiddleware = (
   } else {
     res.sendResponse = res.send;
     res.send = (body) => {
-      cache.put(key, body, 5 * 60 * 1000);
+      // only adds to cacje if the response is not an error
+      if (res.statusCode != 500) {
+        cache.put(key, body, 5 * 60 * 1000);
+      }
+
       res.sendResponse(body);
     };
     next();

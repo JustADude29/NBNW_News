@@ -28,7 +28,7 @@ app.get("/headlinesApi", cacheMiddleware, async (_, res) => {
     res.send(latestHeadlines);
   } catch (error) {
     console.error("Error fetching headlines:", error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send({ ApiError: "Internal Server Error" });
   }
 });
 
