@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Latest Headlines</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        background-color: #333;
+        color: #fff;
+        padding: 1em;
+        text-align: center;
+      }
+
+      main {
+        padding: 20px;
+      }
+
+      #headlinesList {
+        list-style: none;
+        padding: 0;
+      }
+
+      li {
+        background-color: #fff;
+        margin-bottom: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      h3 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+
+      img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin-left: 20px;
+        float: right;
+        max-width: 150px;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      a {
+        text-decoration: none;
+        color: #007bff;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      #errorText {
+        color: #721c24;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+        padding: 10px;
+        margin-bottom: 20px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Latest Headlines</h1>
+    </header>
+
+    <main>
+      <ul id="headlinesList"></ul>
+      <p id="errorText" style="color: red; display: none">
+        There were issues fetching the headlines. Please Try again later
+      </p>
+    </main>
+
+    <script>
+      async function fetchHeadlines() {
+        try {
+          const response = await fetch("/headlinesApi");
+          const articles = await response.json();
+
+          const headlinesList = document.getElementById("headlinesList");
+          articles.forEach((article) => {
+            if (article.title !== "[Removed]") {
+              const listItem = document.createElement("li");
+              listItem.innerHTML = `
+              <h3>${article.title}</h3>
+              <img src="${article.urlToImage}" alt="<NoImage>">
+              ${article.description ? `<p>${article.description}</p>` : ""}
+              <br>
+              <p><strong>Source:</strong> ${article.source.name}</p>
+              <p><strong>Author:</strong> ${article.author}</p>
+              <p><strong>Published At:</strong> ${new Date(article.publishedAt).toLocaleString()}</p>
+              <a href="${article.url}" target="_blank">Read more</a>
+            `;
+              headlinesList.appendChild(listItem);
+            }
+          });
+        } catch (error) {
+          console.error("Error fetching headlines:", error.message);
+          const errorText = document.getElementById("errorText");
+          errorText.style.display = "block";
+        }
+      }
+
+      window.onload = fetchHeadlines;
+    </script>
+  </body>
+</html>
